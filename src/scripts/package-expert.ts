@@ -1,0 +1,11 @@
+import { cp,mkdir,readFile,writeFile } from 'node:fs/promises';
+import { resolve,dirname,join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
+const output=resolve(process.argv[2]??join(root,'artifacts/darlingagent-expert'));
+if(output===join(root,'packages/darlingagent-expert')) throw new Error('Choose an output directory outside the source package');
+await mkdir(output,{recursive:true});await cp(join(root,'packages/darlingagent-expert'),output,{recursive:true});
+await readFile(join(root,'dist/scripts/run-mcp.js'));
+const config={mcpServers:{'darlingagent-local':{command:process.execPath,args:[join(root,'dist/scripts/run-mcp.js')]}}};
+await writeFile(join(output,'.mcp.json'),JSON.stringify(config,null,2)+'\n');
+console.log(JSON.stringify({packageDirectory:output,connectorConfig:join(output,'.mcp.json'),note:'This package points to this checkout. Rebuild on each machine after npm ci.'},null,2));

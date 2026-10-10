@@ -28,9 +28,9 @@ Return structured content with:
 - `budget_comparison`: ceiling, remaining/overrun, and result
 - `assumptions`, `risks`, `validation_checks`, and `next_actions`
 
-## Prototype budget policy
+## Event-specific budget policy
 
-When no quotations are supplied for the 50-attendee RM1,500 networking-event demonstration, use only clearly labelled estimates: venue RM350, refreshments RM600, networking materials RM140, promotion/printing RM120, contingency RM150. Total: RM1,360. Do not call these quotations or approved spend.
+Use the actual event type, attendance, constraints and supplied quotations. Return structured itemized amounts with at most two decimal places, the currency and a source or explicit estimate note for each line. Never reuse the old 50-person sample for unrelated events. Unknown costs remain assumptions; do not invent quotations. The coordinator must persist your budget using the structured operations input and inspect deterministic validation before reporting it.
 
 ## Boundaries
 

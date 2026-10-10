@@ -31,7 +31,7 @@ test("MCP tool discovery exposes only bounded event-management operations", asyn
   await withClient(async (client) => {
     const tools = await client.listTools();
     const names = tools.tools.map((tool) => tool.name).sort();
-    assert.deepEqual(names, ["approval_record_decision", "approval_request", "artifact_get", "budget_validate", "event_create", "event_get", "event_list_tasks", "event_update_facts", "registration_create", "registration_draft", "registration_get", "tally_verify_connection", "task_create", "task_submit_result", "task_transition"]);
+    assert.deepEqual(names, ["approval_record_decision", "approval_request", "artifact_get", "budget_validate", "document_generate", "event_create", "event_create_structured", "event_get", "event_list", "event_list_tasks", "event_update_facts", "proposal_get", "proposal_save", "registration_create", "registration_draft", "registration_get", "tally_verify_connection", "task_create", "task_submit_result", "task_transition", "task_update"]);
     assert.equal(tools.tools.find((tool) => tool.name === "event_create")?.inputSchema.required?.includes("eventId"), true);
   });
 });

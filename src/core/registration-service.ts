@@ -39,6 +39,9 @@ export class RegistrationService {
     if (!input.confirmed) return { ok: false, reason: "confirmation_required" };
     if (this.tally === undefined) return { ok: false, reason: "tally_not_configured" };
     const spec = buildRegistrationSpec(event, input);
+    // Keep the reservation after any failure: the provider may already have accepted the POST.
+    // An operator must reconcile uncertain forms before authorizing another creation.
+    if (!await this.store.registrationForms.reserveCreation(eventId, input.registrationId)) return { ok: false, reason: "duplicate_id" };
     const created = await this.tally.createForm(tallyBlocksFromSpec(spec), spec.capacity);
     if (!created.ok) return { ok: false, reason: mapTallyFailure(created.failure.kind) };
     if (created.form.status !== "PUBLISHED" || created.form.id.trim() === "") {

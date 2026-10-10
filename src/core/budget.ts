@@ -9,7 +9,7 @@ export const prototypeBudget = (): BudgetLine[] => [
 ];
 
 export function calculateTotal(lines: BudgetLine[]): number {
-  return lines.reduce((total, line) => total + line.amount, 0);
+  return Math.round(lines.reduce((total, line) => total + Math.round(line.amount * 100), 0)) / 100;
 }
 
 export function validateBudget(lines: BudgetLine[], limit?: number, currency = "RM"): ValidationCheck[] {
@@ -17,7 +17,7 @@ export function validateBudget(lines: BudgetLine[], limit?: number, currency = "
   const checks: ValidationCheck[] = [];
   checks.push({
     name: "positive line items",
-    status: lines.every((line) => Number.isFinite(line.amount) && line.amount >= 0) ? "passed" : "failed",
+    status: lines.length > 0 && lines.every((line) => Number.isFinite(line.amount) && line.amount >= 0) ? "passed" : "failed",
     detail: "Every line item must have a finite, non-negative amount."
   });
   if (limit === undefined) {
@@ -25,7 +25,7 @@ export function validateBudget(lines: BudgetLine[], limit?: number, currency = "
   } else {
     checks.push({
       name: "budget ceiling",
-      status: total <= limit ? "passed" : "failed",
+      status: Number.isFinite(limit) && limit >= 0 && Number.isFinite(total) && total <= limit ? "passed" : "failed",
       detail: total <= limit ? `${currency}${total} is within the ${currency}${limit} ceiling.` : `${currency}${total} exceeds the ${currency}${limit} ceiling by ${currency}${total - limit}.`
     });
   }

@@ -42,7 +42,10 @@ export interface EventFactRepository extends EventScopedRepository<PersistedEven
 }
 export interface SpecialistResultRepository extends EventScopedRepository<PersistedSpecialistResult> {}
 export interface ValidationRepository extends EventScopedRepository<PersistedValidation> {}
-export interface RegistrationFormRepository extends EventScopedRepository<PersistedRegistrationForm> {}
+export interface RegistrationFormRepository extends EventScopedRepository<PersistedRegistrationForm> {
+  /** Durable per-event reservation before an irreversible external POST. Never automatically released. */
+  reserveCreation(eventId: string, registrationId: string): Promise<boolean>;
+}
 
 export interface PersistenceTransaction {
   transaction<T>(work: () => T): T;

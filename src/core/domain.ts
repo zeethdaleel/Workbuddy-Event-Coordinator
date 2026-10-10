@@ -7,12 +7,25 @@
 export type ValidationStatus = "passed" | "failed" | "not_verified";
 export type EventStatus = "completed" | "needs_input" | "blocked";
 /** Task statuses are the bounded specialist-result states specified in the brief. */
-export type TaskStatus = "queued" | "in_progress" | "needs_input" | "needs_approval" | "blocked" | "completed" | "failed";
+export type TaskStatus = "queued" | "in_progress" | "needs_input" | "needs_approval" | "blocked" | "completed" | "failed" | "cancelled";
 /** Approval state is separate from task/event completion and requires an explicit decision. */
 export type ApprovalStatus = "pending" | "approved" | "rejected" | "expired";
 
 export interface EventRequest {
   title: string;
+  eventType?: string;
+  description?: string;
+  organizer?: string;
+  date?: string;
+  startTime?: string;
+  endTime?: string;
+  timezone?: string;
+  location?: string;
+  venue?: string;
+  targetAudience?: string;
+  requirements?: string[];
+  constraints?: string[];
+  deliverables?: string[];
   attendeeCount?: number;
   budgetLimit?: number;
   currency?: string;

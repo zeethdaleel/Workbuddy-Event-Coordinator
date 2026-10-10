@@ -1,3 +1,6 @@
+import type { OperationsStore } from "../../operations/store.js";
+import { registerLocalDeliverables } from "./local-deliverables.js";
+import { structuredEventSchema } from "../../core/structured-event.js";
 import { McpServer } from "@modelcontextprotocol/server";
 import { serveStdio } from "@modelcontextprotocol/server/stdio";
 import { z } from "zod";
@@ -9,7 +12,7 @@ import type { TaskStatus } from "../../core/domain.js";
 
 const id = z.string().trim().min(1).max(128).regex(/^[A-Za-z0-9][A-Za-z0-9._-]*$/, "Use letters, numbers, '.', '_' or '-'.");
 const text = (name: string, max = 4000) => z.string().trim().min(1, `${name} is required.`).max(max);
-const taskStatus = z.enum(["queued", "in_progress", "needs_input", "needs_approval", "blocked", "completed", "failed"]);
+const taskStatus = z.enum(["queued", "in_progress", "needs_input", "needs_approval", "blocked", "completed", "failed", "cancelled"]);
 
 export interface LocalMcpOptions {
   tally?: TallyFormProvider;
@@ -28,12 +31,13 @@ export function createLocalMcpApplication(databasePath: string, options: LocalMc
   const service = new EventApplicationService(store);
   const registration = new RegistrationService(store, options.tally);
   const server = new McpServer({ name: "campus-event-agent", version: "0.1.0" });
-  registerTools(server, service, registration);
+  const local=registerLocalDeliverables(server,service,databasePath);
+  registerTools(server, service, registration,local);
   return {
     server,
     service,
     registration,
-    async close() { await server.close(); store.close(); }
+    async close() { await server.close(); local.close(); store.close(); }
   };
 }
 
@@ -47,11 +51,16 @@ export function startStdioServer(databasePath: string, options: LocalMcpOptions 
   return { async close() { await handle.close(); await application?.close(); } };
 }
 
-function registerTools(server: McpServer, service: EventApplicationService, registration: RegistrationService): void {
+function registerTools(server: McpServer, service: EventApplicationService, registration: RegistrationService,local:OperationsStore): void {
   server.registerTool("event_create", {
     title: "Create persistent event", description: "Mutation: create a persistent draft planning workflow from an event brief.",
     inputSchema: z.object({ eventId: id, eventBrief: text("eventBrief") })
   }, async ({ eventId, eventBrief }) => result(await service.createEvent(eventId, eventBrief), "Event created."));
+
+  server.registerTool("event_create_structured", {
+    title: "Persist WorkBuddy event plan", description: "WorkBuddy interprets the brief and supplies event facts, itemized costs and assumptions. Backend validates and persists; never implies external execution.",
+    inputSchema: structuredEventSchema.extend({ eventId: id })
+  }, async ({ eventId, ...input }) => result(await service.createStructuredEvent(eventId, input), "Event plan persisted."));
 
   server.registerTool("event_get", {
     title: "Get event", description: "Read-only: retrieve an event workflow and current event summary.", inputSchema: z.object({ eventId: id })
@@ -118,7 +127,11 @@ function registerTools(server: McpServer, service: EventApplicationService, regi
 
   server.registerTool("registration_draft", {
     title: "Draft registration form", description: "Read-only: build a reviewable registration form specification for an event. Never creates a live form.", inputSchema: registrationOptions
-  }, async ({ eventId, ...options }) => result(await registration.draftRegistration(eventId, options), "Registration draft prepared."));
+  }, async ({ eventId, ...options }) => {
+    const draft=await registration.draftRegistration(eventId,options);
+    if(draft.ok) local.db.prepare('INSERT INTO local_registration_drafts VALUES(?,?) ON CONFLICT(event_id) DO UPDATE SET spec=excluded.spec').run(eventId,JSON.stringify(draft.value));
+    return result(draft,"Registration draft prepared.");
+  });
 
   server.registerTool("registration_create", {
     title: "Create live registration form", description: "Mutation: create the live Tally registration form for an event. Requires explicit confirmation and a configured TALLY_API_KEY.",
@@ -151,7 +164,7 @@ function result<T>(outcome: ServiceResult<T>, success: string) {
 }
 
 function ok(value: unknown, summary: string) {
-  return { content: [{ type: "text" as const, text: summary }], structuredContent: { ok: true, value } };
+  return { content: [{ type: "text" as const, text: `${summary}\n${JSON.stringify(value)}` }], structuredContent: { ok: true, value } };
 }
 
 function failure(outcome: Exclude<ServiceResult<unknown>, { ok: true; value: unknown }>) {

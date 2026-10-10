@@ -28,13 +28,14 @@ const eventTransitions: Readonly<Record<EventStatus, readonly EventStatus[]>> = 
 };
 
 const taskTransitions: Readonly<Record<TaskStatus, readonly TaskStatus[]>> = {
-  queued: ["in_progress", "needs_input", "needs_approval", "blocked", "failed"],
-  in_progress: ["needs_input", "needs_approval", "blocked", "completed", "failed"],
-  needs_input: ["queued", "in_progress", "blocked", "failed"],
-  needs_approval: ["in_progress", "completed", "blocked", "failed"],
-  blocked: ["queued", "in_progress", "needs_input", "failed"],
-  completed: [],
-  failed: ["queued", "in_progress", "blocked"]
+  queued: ["in_progress", "needs_input", "needs_approval", "blocked", "failed", "cancelled"],
+  in_progress: ["needs_input", "needs_approval", "blocked", "completed", "failed", "cancelled"],
+  needs_input: ["queued", "in_progress", "blocked", "failed", "cancelled"],
+  needs_approval: ["in_progress", "completed", "blocked", "failed", "cancelled"],
+  blocked: ["queued", "in_progress", "needs_input", "failed", "cancelled"],
+  completed: ["queued"],
+  failed: ["queued", "in_progress", "blocked", "cancelled"],
+  cancelled: ["queued"]
 };
 
 /** Existing event statuses describe the draft-planning workflow, not real-world completion. */

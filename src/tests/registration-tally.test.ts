@@ -201,7 +201,12 @@ test("authentication failures, rate limits, and timeouts map to explicit reasons
     {
       name: "timeout",
       fetchImpl: ((url: unknown, init?: { signal?: AbortSignal }) => new Promise<Response>((_resolve, reject) => {
-        init?.signal?.addEventListener("abort", () => reject(new DOMException("signal timed out", "TimeoutError")));
+        // AbortSignal.timeout uses an unreferenced timer. A real fetch keeps a socket
+        // alive; this mock must also hold the event loop until cancellation.
+        const keepAlive = setInterval(() => {}, 1000);
+        const abort = () => { clearInterval(keepAlive); reject(new DOMException("signal timed out", "TimeoutError")); };
+        if (init?.signal?.aborted) abort();
+        else init?.signal?.addEventListener("abort", abort, { once: true });
       })) as typeof fetch,
       reason: "tally_timeout"
     },
@@ -306,4 +311,30 @@ test("MCP registration tools work without an API key except creation", async () 
     await app.close();
     await rm(directory, { recursive: true, force: true });
   }
+});
+
+test("concurrent registration attempts reserve exactly one external creation", async () => {
+  const { fetchImpl, requests } = tallyHappyPath();
+  await withServices(async (service, registration) => {
+    await service.createEvent("concurrent", BRIEF);
+    const results = await Promise.all([
+      registration.createRegistrationForm("concurrent", {registrationId:"first",confirmed:true}),
+      registration.createRegistrationForm("concurrent", {registrationId:"second",confirmed:true})
+    ]);
+    assert.equal(results.filter(result => result.ok).length, 1);
+    assert.equal(requests.filter(request => request.method === "POST").length, 1);
+  }, new TallyClient({ apiKey: TEST_KEY, fetchImpl }));
+});
+
+test("uncertain form creation is not repeated after a database reopen", async () => {
+  let sends=0;
+  const tally=new TallyClient({apiKey:TEST_KEY,fetchImpl:async()=>{sends++;throw new Error("lost response");}});
+  await withServices(async(service,registration,path)=>{
+    await service.createEvent("uncertain",BRIEF);
+    assert.equal((await registration.createRegistrationForm("uncertain",{registrationId:"one",confirmed:true})).ok,false);
+    const reopened=new SqlitePersistence(path);
+    try {assert.deepEqual(await new RegistrationService(reopened,tally).createRegistrationForm("uncertain",{registrationId:"two",confirmed:true}),{ok:false,reason:"duplicate_id"});}
+    finally {reopened.close();}
+    assert.equal(sends,1);
+  },tally);
 });

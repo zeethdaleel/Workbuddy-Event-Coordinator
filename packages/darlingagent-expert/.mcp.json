@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "darlingagent-local": {
+      "command": "node",
+      "args": [
+        "${CODEBUDDY_PLUGIN_ROOT}/../../dist/scripts/run-mcp.js"
+      ]
+    }
+  }
+}

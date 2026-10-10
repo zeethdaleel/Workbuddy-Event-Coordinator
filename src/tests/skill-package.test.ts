@@ -71,7 +71,7 @@ test("package ships the skill and documents the verified Skills CLI syntax", asy
     "package files must include the skills directory"
   );
   const readme = await readFile(join(packageRoot, "README.md"), "utf8");
-  assert.ok(readme.includes("npx skills add zeethdaleel/Workbuddy-Event-Coordinator --list"));
+  assert.ok(readme.includes("npx skills add faizanburgi/DarlingAgent --list"));
   assert.ok(readme.includes("--skill campus-event-agent"));
   for (const agent of ["-a opencode", "-a codex", "-a claude-code", "-a cursor", "-a windsurf"]) {
     assert.ok(readme.includes(agent), `README must document the verified ${agent} identifier`);

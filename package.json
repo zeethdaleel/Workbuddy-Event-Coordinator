@@ -5,7 +5,7 @@
   "description": "Deterministic prototype support for the Campus Event Agent WorkBuddy Expert Team.",
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -13,7 +13,12 @@
     "prepack": "npm run build",
     "test": "npm run build && node --test dist/tests/**/*.test.js",
     "demo": "npm run build && node dist/scripts/run-demo.js",
-    "mcp": "npm run build && node dist/scripts/run-mcp.js"
+    "mcp": "npm run build && node dist/scripts/run-mcp.js",
+    "start": "node dist/scripts/run-server.js",
+    "worker": "node dist/scripts/run-worker.js",
+    "mcp:operations": "node dist/scripts/run-operations-mcp.js",
+    "migrate": "node dist/scripts/migrate.js",
+    "expert:package": "npm run build && node dist/scripts/package-expert.js"
   },
   "bin": {
     "campus-event-agent": "dist/scripts/run-mcp.js"
@@ -23,17 +28,22 @@
     "skills/**/*",
     "README.md",
     "packages/workbuddy-team/**/*",
-    ".env.example"
+    ".env.example",
+    "packages/darlingagent-expert/**/*"
   ],
   "devDependencies": {
     "@modelcontextprotocol/client": "2.3.1",
     "@types/better-sqlite3": "^9.6.0",
+    "@types/luxon": "^3.7.6",
     "@types/node": "^22.10.2",
     "typescript": "^5.7.3"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.3.1",
     "better-sqlite3": "^13.0.3",
+    "google-auth-library": "^11.2.0",
+    "luxon": "^3.7.2",
+    "pdf-lib": "^1.17.1",
     "zod": "4.6.5"
   }
 }

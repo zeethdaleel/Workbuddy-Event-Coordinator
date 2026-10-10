@@ -85,7 +85,12 @@ test("verify maps network failures and timeouts without leaking", async () => {
     assert.deepEqual(await registration.verifyTallyConnection(), { ok: false, reason: "tally_unavailable" });
   }, network.fetchImpl);
   const hanging = ((url: unknown, init?: { signal?: AbortSignal }) => new Promise<Response>((_resolve, reject) => {
-    init?.signal?.addEventListener("abort", () => reject(new DOMException("signal timed out", "TimeoutError")));
+    // AbortSignal.timeout uses an unreferenced timer. A real fetch keeps a socket
+        // alive; this mock must also hold the event loop until cancellation.
+        const keepAlive = setInterval(() => {}, 1000);
+        const abort = () => { clearInterval(keepAlive); reject(new DOMException("signal timed out", "TimeoutError")); };
+        if (init?.signal?.aborted) abort();
+        else init?.signal?.addEventListener("abort", abort, { once: true });
   })) as typeof fetch;
   const directory = await mkdtemp(join(tmpdir(), "campus-event-tally-verify-timeout-"));
   const store = new SqlitePersistence(join(directory, "events.sqlite"));

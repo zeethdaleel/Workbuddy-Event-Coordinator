@@ -1,3 +1,4 @@
+import { prepareStructuredWorkflow, type StructuredEvent } from "./structured-event.js";
 import { validateBudget } from "./budget.js";
 import { preparePrototypeWorkflow } from "./application.js";
 import type {
@@ -31,6 +32,11 @@ export class EventApplicationService {
   async createEvent(id: string, requestText: string): Promise<ServiceResult<PersistedEvent>> {
     const result = await this.store.events.create({ id, revision: 0, workflow: preparePrototypeWorkflow(requestText) });
     return result.ok ? { ok: true, value: result.record } : result;
+  }
+
+  async createStructuredEvent(id: string, input: StructuredEvent): Promise<ServiceResult<PersistedEvent>> {
+    const created = await this.store.events.create({ id, revision: 0, workflow: prepareStructuredWorkflow(input) });
+    return created.ok ? { ok: true, value: created.record } : created;
   }
 
   async getEvent(id: string): Promise<ServiceResult<PersistedEvent>> {
@@ -71,7 +77,7 @@ export class EventApplicationService {
     const task = await this.store.tasks.get(id);
     if (task === undefined) return { ok: false, reason: "not_found" };
     if (task.revision !== expectedRevision) return { ok: false, reason: "revision_conflict" };
-    if (next === "completed") {
+    if (next === "completed" || next === "in_progress") {
       const dependencies = await this.store.tasks.dependencies(id);
       for (const dependencyId of dependencies) if ((await this.store.tasks.get(dependencyId))?.status !== "completed") return { ok: false, reason: "dependency_unmet" };
     }

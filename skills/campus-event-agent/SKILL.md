@@ -12,7 +12,7 @@ Coordinate a university event end to end: understand the request, plan specialis
 - This skill is **guidance for the coordinator role**. It teaches the workflow; it does not install software.
 - The six specialist areas below are **responsibility checklists**, not executable subagents. Perform each workstream yourself, or delegate through tools your environment actually provides.
 - Only two native WorkBuddy roles exist today (Event Coordinator and Finance & Budgeting, in `packages/workbuddy-team/`). Do not claim the other four exist as WorkBuddy agents.
-- The Campus Event Agent MCP server (15 tools: persistent events, tasks, facts, specialist results, budget validation, approvals, artifact metadata, registration, diagnostics) is a **separate installation**. Installing this skill does not install or configure the MCP server. If the tools are unavailable, use the fallback in "When the MCP server is not connected".
+- The Campus Event Agent legacy local MCP server (persistent tools: persistent events, tasks, facts, specialist results, budget validation, approvals, artifact metadata) is a **separate installation**. Installing this skill does not install or configure the MCP server. If the tools are unavailable, use the fallback in "When the MCP server is not connected".
 - This skill never books venues, grants approvals, spends funds, sends messages, or publishes announcements. A live registration form link may only be reported when the `registration_create` tool (or another authorised tool) actually created one and returned evidence with user confirmation.
 
 ## 1. Understand the request
@@ -111,3 +111,9 @@ Tell the user the persistent server is not connected and continue with file-base
 ## 9. Report honestly
 
 Close every engagement with: status (`completed`, `completed with outstanding actions`, `needs_input`, `needs_approval`, `blocked`, or `failed`); artifacts actually created with their draft status; validation results including checks marked not verified; assumptions; unresolved issues and missing information; pending approvals; and next actions. Never claim a venue is booked, a form is live, a permission is granted, a message is sent, or funds are committed without evidence.
+
+## DarlingAgent 2.0 operations adapter
+
+For the authenticated backend use `darling_operations` as documented in `docs/OPERATIONS.md` and `packages/workbuddy-team/README.md`. It is separate from the trusted-local prototype tools above. WorkBuddy supplies structured event facts and itemized costs; the backend validates them, generates PDFs, persists reminders and prepares actions. A Telegram user must approve exact external action content. No approval operation is exposed to the agent.
+
+Use event-specific data and preserve event IDs. Read before editing, respect dependencies and do not mark tasks complete from model assertions. Reuse request UUIDs on transport retries; inspect uncertain effects before any new attempt. Credentials stay in secure connection pages. The backend does not invoke an undocumented WorkBuddy cloud API. Vendor research and complete team operations remain incomplete; report unsupported requests honestly.

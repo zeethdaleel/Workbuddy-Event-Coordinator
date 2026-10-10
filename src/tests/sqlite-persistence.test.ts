@@ -31,13 +31,13 @@ async function withDatabase(run: (store: SqlitePersistence, path: string) => Pro
 
 test("initializes once and persists an event across a database reopen", async () => {
   await withDatabase(async (store, path) => {
-    assert.equal(store.schemaVersion(), 1);
+    assert.equal(store.schemaVersion(), 2);
     assert.deepEqual(await store.events.create(event()), { ok: true, record: event() });
     store.close();
 
     const reopened = new SqlitePersistence(path);
     try {
-      assert.equal(reopened.schemaVersion(), 1);
+      assert.equal(reopened.schemaVersion(), 2);
       assert.deepEqual(await reopened.events.get("event-1"), event());
       assert.equal(await reopened.events.get("missing"), undefined);
       assert.deepEqual(await reopened.events.create(event()), { ok: false, reason: "duplicate_id" });
