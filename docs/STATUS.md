@@ -1,54 +1,119 @@
-# Current hackathon priority
+# DarlingAgent — Project Status
 
-The local-first Expert implementation and its verification limits are tracked in [LOCAL_MVP.md](LOCAL_MVP.md). The ledger below describes the preserved hosted operations increment. Cloud/Telegram/OAuth work is paused by user direction.
+Last reviewed: 11 October 2026
 
-# Capability and verification ledger
+## Current Focus
 
-This is a tested implementation increment, **not completion of the full 2.0 specification**. No cloud deployment, live external send/publication, native WorkBuddy run or laptop-off demonstration has been performed.
+DarlingAgent is currently focused on a local-first
+autonomous event operations MVP for Tencent WorkBuddy.
 
-| Capability | Implementation | Verification / limits |
+The goal is to demonstrate:
+
+**One Prompt → Tool Execution → Verified Deliverables**
+
+Telegram integration and 24/7 cloud deployment are
+not part of the active hackathon MVP.
+
+## Implementation Status
+
+| Capability | Status | Evidence or limitation |
 |---|---|---|
-| Existing event/task/fact persistence and local MCP | IMPLEMENTED | Existing baseline 46 automated tests passed |
-| WorkBuddy structured event facts, budget and assumptions | IMPLEMENTED | Local schema, arithmetic, different-event and persistence tests |
-| Natural-language intelligence | NEEDS_CONFIGURATION | WorkBuddy desktop remains responsible; native routing not live verified |
-| Legacy title/attendance budget fallback | IMPLEMENTED | No fixed title; scaled illustrative costs clearly labeled, not autonomous planning |
-| Authenticated owner-scoped operations MCP/HTTP | IMPLEMENTED | HTTP auth, private Telegram identity, cross-user rejection and idempotency tested |
-| Task creation, dependencies, start, result submission and verified completion | IMPLEMENTED | Local SQLite checks; declared budget/document/action output contracts gate completion; agent text cannot prove external completion |
-| Task/team metadata and participation | IMPLEMENTED | Identity-bound invitations, recipient acceptance/decline, assignments, deadlines, priorities, notes, document references, cancellation/reopen and revision checks tested locally |
-| Full team/group operations | NOT_IMPLEMENTED | Group roles, member removal, manual completion confirmation and assignment/deadline notifications remain |
-| Proposal PDF and document versions | IMPLEMENTED | Real PDF parsing, multipage, hash/tamper/access tests; two offline sample PDFs rendered and inspected |
-| Telegram messages and file upload | TESTED_WITH_MOCKS | Matching chat/message/file acknowledgments validated; no live delivery |
-| Reminder worker | IMPLEMENTED | Atomic claims, restart uncertainty, recurrence/DST, rate-limit retry, cancellation tested |
-| Cloud reminders with laptop off | BLOCKED | Host not selected/provisioned; no deployed bot credentials |
-| Progress-report reminders | IMPLEMENTED | Uses persisted task statuses; no LLM required |
-| Monthly/hourly/event-relative recurrence and alerts | NOT_IMPLEMENTED | Supported subset: once/daily/weekly and pending-task report |
-| Darling Connect secure state, browser cookie, PKCE and AES-GCM | IMPLEMENTED | State expiry/replay, owner isolation, encryption and mocked PKCE/identity/scope tests; Google live consent not verified |
-| Google OAuth refresh/scope/account verification | NEEDS_CONFIGURATION | Maintained Google library integration; no real Google project/account supplied |
-| Approved Gmail send with PDF attachments | TESTED_WITH_MOCKS | Exact preview, owner/hash/expiry gate, one-time send, stored message ID |
-| Gmail mailbox reading and provider draft-folder creation | NOT_IMPLEMENTED | Local durable email drafts only; minimal send scope |
-| Tally create/get and encrypted onboarding | TESTED_WITH_MOCKS | Existing mocked API tests plus concurrency/restart reservations; no live key/form |
-| Tally deadline enforcement and analytics/export | NOT_IMPLEMENTED | Deadline is stored but not enforced; preview explicitly discloses it |
-| Calendar create and private Drive PDF upload | IMPLEMENTED | Mocked request/acknowledgment tests; live verification pending; update/delete/folders not implemented |
-| Vendor research | NOT_IMPLEMENTED | WorkBuddy browsing/source collection workflow still needs tooling and persistence integration |
-| Content-bound Telegram approvals | IMPLEMENTED | Owner, exact hash, expiry and duplicate execution tests |
-| Pending connection resumption | IMPLEMENTED | Draft retained; /review after connecting; no automatic send on connection |
-| Native WorkBuddy team import | BLOCKED | Prior manifest absent; installed client/account validation still required |
-| WorkBuddy cloud execution API | BLOCKED | No officially supported account-specific path verified; no fabricated endpoint |
-| Docker deployment | NEEDS_CONFIGURATION | Recipe supplied; Docker daemon unavailable so image not built |
-| DOCX/XLSX/CSV/ZIP and 15 distinct PDF templates | NOT_IMPLEMENTED | Current document scope is proposal containing budget/tasks/facts |
-| QR check-in/sponsorship/post-event advanced features | NOT_IMPLEMENTED | Phase 7 scope remains |
+| Local MCP server | Implemented | Tested through real stdio subprocess |
+| SQLite event persistence | Implemented | Tested across process restart |
+| Structured event creation | Implemented | Tested with different event inputs |
+| Task creation and dependencies | Implemented | Automated tests |
+| Task metadata updates | Implemented | Revision checks tested |
+| Budget validation | Implemented | Deterministic calculations tested |
+| Registration drafting | Implemented | Local tests |
+| Proposal persistence | Implemented | Revision-checked local workflow |
+| PDF generation | Implemented | Actual generated PDFs verified |
+| Task tracker output | Implemented | Local output tests |
+| Invitation draft output | Implemented | Saved as unsent draft |
+| WorkBuddy Expert package | Implemented | Package schema validated |
+| Native WorkBuddy execution | Pending live verification | Complete UI tool-use run not recorded |
+| Live Tally publication in current MVP | Pending live verification | Requires API key and approval |
+| Source-linked vendor research | Conditional | Requires actual WorkBuddy research tools |
+| Email sending | Conditional | Requires available connector and approval |
+| Telegram bot integration | Paused | Not required for local MVP |
+| 24/7 reminders | Paused | Cloud infrastructure not deployed |
+| Multi-user collaboration | Incomplete | Full team workflows not available |
+| Production deployment | Not verified | MVP is local-first |
 
-## Security boundary and known risks
+## Automated Verification
 
-- Deploy the **operations** interface, not the old trusted-local MCP, for Telegram-backed actions. Legacy approval records are not an identity proof.
-- Backend token is bound to one configured organizer. Group and multi-coordinator authorization are outside this increment.
-- Telegram has no send idempotency key. A response lost after acceptance is held for review, not retried automatically. A crash after claiming an action leaves `RUNNING`; treat it as uncertain and reconcile externally. There is no unsafe automatic reset.
-- Document delivery has no automatic retry. Check the audit log and Telegram chat before repeating it after ambiguity.
-- Built-in PDF fonts cover Latin characters. Unsupported glyphs fail explicitly; embedded multilingual fonts are future work.
-- Event changes cancel pending approvals and identify stale artifacts, but do not silently republish forms, reschedule event-relative jobs or change external calendars.
-- No service should be described as continuously monitoring until deployed and its job actually scheduled.
-- OAuth provider reviews, live account permissions and hackathon eligibility must be validated by the operator. This code was developed with Codex.
+The implementation has previously passed
+a local suite of 74 automated tests.
 
-## Test commands
+Covered areas include:
 
-`npm ci && npm test` covers the legacy and new suites. `node dist/scripts/demo-operations.js artifacts/operations` creates two local real PDFs with verification JSON; it throws if anything tries to contact a provider. These are offline scenarios, not a live WorkBuddy demonstration.
+- Event persistence
+- Task dependencies
+- Budget calculations
+- SQLite state
+- Real MCP subprocess communication
+- PDF generation
+- Process-restart retrieval
+- Registration safeguards
+
+Automated test success does not prove that
+the complete AI-driven WorkBuddy workflow
+has executed successfully in the UI.
+
+For current CI results, visit:
+
+https://github.com/zeethdaleel/darling-agent/actions
+
+## Outstanding Acceptance Tests
+
+Before describing the MVP as fully demonstrated:
+
+1. Open DarlingAgent from WorkBuddy's My Experts.
+2. Confirm the Expert instructions load.
+3. Confirm the local MCP connector is available.
+4. Execute a complete event-planning request.
+5. Record the actual MCP tool calls.
+6. Open the generated proposal PDF.
+7. Retrieve the same event in a follow-up.
+8. Test a second event with different requirements.
+9. Verify Tally publication separately if configured.
+
+## Known Limitations
+
+- Budgets can contain illustrative estimates.
+- Estimates are not verified supplier quotations.
+- Venue availability is not automatically confirmed.
+- Registration deadlines are not automatically enforced.
+- Publishing and sending require explicit authorization.
+- Research requires actual available browsing tools.
+- The local MCP server is not a public authentication service.
+- Telegram and hosted workflows are not active MVP interfaces.
+- Advanced team operations and document formats remain future work.
+
+## Project Direction
+
+Current:
+
+**WorkBuddy Expert + Local MCP + Persistent SQLite + Real Documents**
+
+Possible future work:
+
+- Additional native integrations
+- Extended registration capabilities
+- More document formats
+- Stronger collaboration features
+- Optional cloud deployment
+- Background automation
+
+Future work should not be represented as available functionality.
+
+## Documentation
+
+[Installation](INSTALLATION.md)
+
+[Architecture](ARCHITECTURE.md)
+
+[Demo and Verification](DEMO.md)
+
+[Local MVP Technical Record](LOCAL_MVP.md)
+
+[Original Operations Protocol](OPERATIONS.md)
