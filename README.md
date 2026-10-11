@@ -13,7 +13,7 @@ validated budgets, real documents, and actionable workflows.
 
 <br/>
 
-### [🌐 Visit Website](https://darlingagent.vercel.app) · [🚀 Get Started](https://darlingagent.vercel.app) · [💻 View Source](https://github.com/zeethdaleel/darling-agent)
+### [🌐 Visit Website](https://darlingagentweb-darlingagent.vercel.app) · [🚀 Get Started](https://darlingagentweb-darlingagent.vercel.app) · [💻 View Source](https://github.com/zeethdaleel/darling-agent)
 
 <br/>
 
@@ -45,7 +45,7 @@ generate documents, and report verifiable results.
 
 ### Explore the full experience
 
-**[Visit the Official DarlingAgent Website →](https://darlingagent.vercel.app)**
+**[Visit the Official DarlingAgent Website →](https://darlingagentweb-darlingagent.vercel.app)**
 
 Discover the product, explore its capabilities,
 and learn how to get started.
@@ -151,7 +151,7 @@ and give it an event-planning objective.
 > setup method, not a verified one-click installation.
 > Follow the repository's Expert installation guide.
 
-**[Get Started on the Website →](https://darlingagent.vercel.app)**
+**[Get Started on the Website →](https://darlingagentweb-darlingagent.vercel.app)**
 
 ### Option 2 — Local Installation
 
@@ -289,7 +289,7 @@ workflow supports generating and storing:
 External publication requires the appropriate
 service connection and explicit approval.
 
-**[Learn More on the Website →](https://darlingagent.vercel.app)**
+**[Learn More on the Website →](https://darlingagentweb-darlingagent.vercel.app)**
 
 ---
 
@@ -416,7 +416,7 @@ claims of implemented functionality.
 
 ### [Explore DarlingAgent ↗](https://darlingagent.vercel.app)
 
-[Website](https://darlingagent.vercel.app) ·
+[Website](https://darlingagentweb-darlingagent.vercel.app) ·
 [WorkBuddy](https://www.workbuddy.ai/) ·
 [GitHub](https://github.com/zeethdaleel/darling-agent)
 
