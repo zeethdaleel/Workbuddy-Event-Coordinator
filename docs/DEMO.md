@@ -1,35 +1,249 @@
-# Repeatable verification scenarios
+# DarlingAgent — Hackathon Demonstration
 
-## Offline artifact verification
+## Objective
+
+Demonstrate that DarlingAgent is more than
+a conversational event-planning chatbot.
+
+The demonstration should show WorkBuddy
+interpreting an event request and invoking
+real tools to create persistent, verifiable outputs.
+
+## Prerequisites
+
+- DarlingAgent repository cloned
+- Node.js 22+
+- Dependencies installed
+- WorkBuddy Expert package generated
+- DarlingAgent Expert installed in WorkBuddy
+- Local MCP connector working
+- Access to generated files
+
+Optional:
+
+- Tally API key
+- Supported WorkBuddy research tools
+- Supported email connector
+
+## Pre-Demo Checks
+
+Run:
 
 ```bash
 npm ci
 npm test
-node dist/scripts/demo-operations.js artifacts/operations
+npm run expert:package
 ```
 
-This creates two actual proposal PDFs and `verification.json` for:
+Verify:
 
-1. AI networking, 50 attendees, MYR1,500 ceiling, MYR1,250 illustrative costs.
-2. Robotics competition, 120 attendees, MYR5,000 ceiling, MYR4,500 illustrative costs.
+- The build succeeds.
+- The Expert package exists.
+- WorkBuddy can discover its MCP tools.
+- SQLite storage is writable.
+- Generated files can be opened.
 
-Both use temporary real SQLite databases, event-specific supplied structured plans and real PDF generation. The script deletes its temporary database after exporting the evidence. No WorkBuddy interpretation, vendor research, form publication or delivery occurs. Automated tests also deliberately use an over-budget ceiling, missing permissions, duplicate messages, uncertain network outcomes, competing workers and DST transitions.
+## Main Demonstration Prompt
 
-## Required live demonstration (pending)
+Open DarlingAgent inside WorkBuddy.
 
-Prerequisites: follow DEPLOYMENT.md; connect the operations MCP in WorkBuddy; start the bot; connect only the services you intend to test. Obtain approval in Telegram before each publication/send. Use your own test recipient.
+Enter:
 
-Paste the user's requested AI networking prompt into WorkBuddy. Ask the coordinator to use actual `darling_operations` tools and expose tool results:
+> Organize an AI networking event for
+> 50 students at Taylor's University
+> on 20 October 2026, from 4 PM to 6 PM.
+>
+> The budget is RM1,500.
+>
+> Create the event workspace, plan the event,
+> organize tasks, calculate and validate the budget,
+> draft registration, and generate a professional
+> event proposal PDF.
+>
+> Use available MCP tools to execute the work.
+> Ask before publishing anything externally.
+> Show completed results, file paths, and
+> unresolved actions.
 
-> Organize an AI networking event for 50 students at Taylor's University on 20 October 2026 from 4 PM to 6 PM, Asia/Kuala_Lumpur, with MYR1,500. Create the event workspace, prepare a plan and budget, prepare registration and an invitation, generate a proposal PDF, create organizer tasks and remind me tomorrow at 9 AM to review remaining work. Complete everything safely supported. Ask for approval before publishing or sending. Label vendor research unsupported unless your real browsing tools find and cite sources.
+## Expected Execution
 
-1. Persist structured facts and budget; record the returned event ID. Inspect it through a new session.
-2. Create dependent tasks. Try starting a task before its prerequisite completes and confirm rejection. Declare budget/document/action output contracts at task creation, then complete them using the corresponding verified output. Arbitrary agent text cannot complete them.
-3. Generate the PDF and deliver it through Telegram. Open the attachment and verify title, date, amounts, assumptions and tasks.
-4. Prepare Tally registration. Review fields, capacity and the disclosed deadline limitation; approve only if acceptable. Open the actual returned URL and submit a test registration. Record the provider ID and retrieval evidence.
-5. Prepare the exact invitation to your own test address. Connect Gmail if needed, `/review` the stored action and approve. Confirm the stored Gmail message ID. Gmail acceptance does not prove inbox arrival; inspect the test inbox separately.
-6. Schedule a near-term one-time reminder and a daily pending-task report. Perform the laptop-off test in DEPLOYMENT.md. Record Telegram acknowledgment IDs.
-7. Repeat with a robotics competition for 120 students and MYR5,000 to demonstrate differing stored facts and budgets.
-8. Report each artifact/action as complete, failed, uncertain, waiting for connection/approval or unsupported. Preserve real evidence; never substitute test fixture IDs.
+### 1. Understand the Request
 
-Remaining gaps prevent claiming the complete 20-item live acceptance scenario: WorkBuddy routing/import and cloud hosting need live setup; vendor research, complete team operations, registration deadlines and some requested outputs remain unimplemented. See STATUS.md for the explicit ledger.
+Extract:
+
+- Event type
+- Attendance
+- Budget
+- Currency
+- Date and time
+- Location
+- Requested deliverables
+
+Unknown facts must be identified.
+
+### 2. Create Event Record
+
+Create a persistent event through the MCP server.
+
+Record the real event ID.
+
+### 3. Create Tasks
+
+Create tasks and dependencies.
+
+Verify they are stored and retrievable.
+
+### 4. Validate Budget
+
+Create an itemized budget.
+
+Run the deterministic budget validation tool.
+
+Confirm totals and remaining budget.
+
+Clearly identify estimated costs.
+
+### 5. Generate Documents
+
+Save the event proposal.
+
+Generate a real PDF.
+
+Verify:
+
+- The file exists.
+- The file opens.
+- Event facts are correct.
+- Budget figures match.
+- Relevant tasks are included.
+
+Retrieve the generated task tracker
+and invitation draft if produced.
+
+### 6. Prepare Registration
+
+Generate a registration specification.
+
+Show the draft fields.
+
+Do not publish without explicit approval.
+
+If Tally is not connected, clearly report
+the form as a draft.
+
+## Persistence Test
+
+Start a follow-up interaction.
+
+Ask:
+
+> Retrieve the event we just created.
+> Show the saved budget, tasks,
+> registration status, and proposal.
+
+Verify that DarlingAgent retrieves the
+previously saved event rather than recreating
+a sample response.
+
+## Second Scenario
+
+Enter:
+
+> Organize a robotics competition for
+> 120 students with a budget of RM5,000.
+>
+> Create a new event record, budget,
+> task plan, and proposal PDF.
+
+Verify that:
+
+- The event ID differs.
+- Attendance differs.
+- Budget differs.
+- Task and proposal content reflect the new event.
+- The first event remains accessible.
+
+## Optional Live Tally Test
+
+Only if a valid Tally API key is configured:
+
+1. Prepare the draft.
+2. Review the exact registration fields.
+3. Approve publication explicitly.
+4. Invoke the registration creation tool.
+5. Retrieve the published form.
+6. Open its URL.
+7. Submit a test registration if appropriate.
+
+Record actual provider evidence.
+
+Do not substitute mocked test results.
+
+## Optional Research and Communication
+
+If WorkBuddy has relevant research tools:
+
+- Find real vendors.
+- Record source URLs.
+- Do not invent prices or availability.
+
+If a supported email connector is connected:
+
+- Prepare exact recipient and message details.
+- Obtain approval.
+- Send only if supported and authorized.
+- Verify the provider response.
+
+Otherwise, save the invitation as an unsent draft.
+
+## Evidence Checklist
+
+| Evidence | Required |
+|---|---|
+| WorkBuddy Expert visible | Yes |
+| Real MCP tool calls | Yes |
+| Persistent event ID | Yes |
+| Saved tasks | Yes |
+| Budget validation | Yes |
+| Actual PDF | Yes |
+| Event retrieval | Yes |
+| Second distinct event | Yes |
+| Live Tally link | Optional, only if verified |
+| Research sources | Optional, only if verified |
+| Approved email send | Optional, only if verified |
+
+## Demonstration Rules
+
+Never claim an action succeeded unless
+there is evidence that it happened.
+
+Clearly distinguish:
+
+- Completed
+- Draft
+- Waiting for approval
+- Requires configuration
+- Unsupported
+- Failed
+
+The strongest demonstration is a short,
+repeatable workflow with real tool outputs.
+
+## Current Verification Record
+
+See:
+
+[LOCAL_MVP.md](LOCAL_MVP.md)
+
+This document describes previous automated tests,
+package validation, and outstanding live checks.
+
+## Final Demo Goal
+
+A judge gives DarlingAgent one event objective.
+
+WorkBuddy interprets it, invokes real tools,
+creates documents and persistent records,
+and reports verifiable results.
+
+**One Prompt. One Goal. End-to-End Execution.**
