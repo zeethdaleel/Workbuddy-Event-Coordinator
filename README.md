@@ -1,95 +1,503 @@
 # DarlingAgent
 
+### Your Event. Our Execution.
+
 **One Prompt. One Goal. End-to-End Execution.**
 
-DarlingAgent is a **local-first WorkBuddy Expert** for event planning. WorkBuddy supplies reasoning and calls a local MCP server for persistent events, dependency tasks, budget validation, registration drafts and real proposal PDFs. Tally publication requires configuration and explicit approval; email uses an available native connector or remains an unsent draft.
+DarlingAgent is a local-first AI event operations agent designed for
+Tencent WorkBuddy.
 
-Start with [the local Expert installation guide](packages/darlingagent-expert/README.md) and [the MVP verification record](docs/LOCAL_MVP.md). The earlier hosted backend, Telegram bot, reminder worker and OAuth implementation are preserved but are not required for this hackathon workflow.
+It helps event organizers transform a natural-language request into
+structured planning work, persistent tasks, validated budgets,
+registration workflows, and real deliverable documents.
 
-```sh
+Rather than simply suggesting what to do, DarlingAgent uses MCP tools
+to execute supported operations and verify their results.
+
+**Best experienced in Tencent WorkBuddy.**
+
+[Explore WorkBuddy](https://www.workbuddy.ai/) |
+[Installation Guide](docs/INSTALLATION.md) |
+[Architecture](docs/ARCHITECTURE.md) |
+[Project Status](docs/STATUS.md)
+
+---
+
+## Why DarlingAgent?
+
+Organizing an event involves numerous disconnected responsibilities:
+
+- Planning schedules and activities
+- Managing budgets and expenses
+- Coordinating organizers and deadlines
+- Preparing registration forms
+- Researching vendors
+- Creating documents and invitations
+- Tracking unfinished work
+
+Most AI chatbots can suggest an event plan.
+
+DarlingAgent aims to go further by connecting AI reasoning
+to persistent tools that perform and validate actual work.
+
+**Describe the event. Let the agent handle the supported operations.**
+
+---
+
+## How It Works
+
+```text
+              EVENT ORGANIZER
+                     |
+                     v
+               TENCENT WORKBUDDY
+                     |
+                     v
+                 DARLINGAGENT
+                     |
+              Understand the goal
+                     |
+                     v
+              Plan the workflow
+                     |
+                     v
+              EXECUTE MCP TOOLS
+                     |
+        +------------+------------+
+        |            |            |
+        v            v            v
+     Event DB      Budgets     Documents
+        |            |            |
+        v            v            v
+      Tasks       Validation   PDF Proposal
+        |            |            |
+        +------------+------------+
+                     |
+                     v
+                VERIFY OUTPUTS
+                     |
+                     v
+             DELIVER REAL RESULTS
+```
+
+WorkBuddy handles natural-language understanding, planning,
+and tool selection.
+
+The DarlingAgent MCP server handles deterministic operations,
+database persistence, validation, and document generation.
+
+External operations such as publishing a registration form
+require configuration and explicit user approval.
+
+---
+
+## Core Capabilities
+
+### Autonomous event planning
+
+DarlingAgent provides a WorkBuddy Expert and tools for organizing
+event-planning workflows from natural-language instructions.
+
+The complete native WorkBuddy execution flow is still undergoing
+live verification.
+
+### Persistent event management
+
+Create, retrieve, and update event records.
+
+Event details and task information are stored in SQLite,
+allowing supported records to persist between sessions.
+
+### Task coordination
+
+Create structured tasks with dependencies and lifecycle states.
+
+Record descriptions, priorities, and other task details.
+
+Dependencies and supported state transitions are checked by
+the application rather than relying solely on AI-generated text.
+
+### Budget validation
+
+Prepare event-specific itemized budgets.
+
+The backend calculates totals and compares them against the
+specified budget ceiling.
+
+Cost estimates must be identified as estimates rather than
+verified supplier quotations.
+
+### Professional event documents
+
+Generate real PDF event proposals containing relevant event facts,
+budget details, planning information, tasks, and registration status.
+
+The local workflow can also generate a task tracker and an
+unsent invitation draft.
+
+### Registration workflows
+
+Prepare registration forms and review their details.
+
+Tally integration supports publishing a registration form after
+explicit confirmation and successful provider configuration.
+
+A registration draft is not presented as a published form.
+
+### WorkBuddy integrations
+
+DarlingAgent is designed to use compatible WorkBuddy capabilities
+for additional tasks such as source-based vendor research and
+approved communications.
+
+Availability depends on the connected tools and permissions.
+
+These integrations must be verified individually.
+
+---
+
+## Best Used in WorkBuddy
+
+DarlingAgent is developed primarily as a custom WorkBuddy Expert.
+
+### Quick Start
+
+**1. Install WorkBuddy**
+
+Visit:
+
+https://www.workbuddy.ai/
+
+Install WorkBuddy and sign in.
+
+**2. Open this repository**
+
+https://github.com/zeethdaleel/darling-agent
+
+**3. Ask WorkBuddy to help configure DarlingAgent**
+
+You can use the following prompt:
+
+> Inspect https://github.com/zeethdaleel/darling-agent.
+> Help me install DarlingAgent as a custom WorkBuddy Expert
+> using the repository's official installation instructions.
+> Build the project, configure its local MCP tools, and verify
+> that the Expert can access the required capabilities.
+> Do not assume installation succeeded without testing it.
+
+**4. Complete installation**
+
+Follow the instructions in
+[docs/INSTALLATION.md](docs/INSTALLATION.md).
+
+**5. Open DarlingAgent**
+
+Once the custom Expert and its MCP connector are installed,
+select DarlingAgent from WorkBuddy's My Experts interface.
+
+The exact installation workflow may depend on your
+WorkBuddy version.
+
+---
+
+## Local Developer Setup
+
+### Requirements
+
+- Node.js 22 or newer
+- npm
+- Git
+- macOS, Windows, or Linux
+- WorkBuddy for the recommended Expert experience
+
+### Clone the repository
+
+```bash
+git clone https://github.com/zeethdaleel/darling-agent.git
+cd darling-agent
+```
+
+### Install dependencies
+
+```bash
 npm ci
+```
+
+### Run the test suite
+
+```bash
 npm test
+```
+
+### Build the WorkBuddy Expert package
+
+```bash
 npm run expert:package
 ```
 
-Install `artifacts/darlingagent-expert` through WorkBuddy's native expert-manager, connect its local stdio configuration, then summon DarlingAgent from My Experts. No system-prompt pasting is needed per event.
-
-## Start here
-
-- [Repository audit and baseline](docs/AUDIT.md)
-- [Setup, accounts, secrets, Telegram webhook and deployment](docs/DEPLOYMENT.md)
-- [WorkBuddy desktop and MCP setup](packages/workbuddy-team/README.md)
-- [Operations contract and approval boundaries](docs/OPERATIONS.md)
-- [Offline and live demonstration procedures](docs/DEMO.md)
-- [Implemented, mocked, blocked and missing capabilities](docs/STATUS.md)
-
-## Build and test
-
-Node.js **22+** and npm are required. Use the committed npm lockfile.
-
-```bash
-npm ci
-npm test
-node dist/scripts/demo-operations.js artifacts/operations
-```
-
-The offline demonstration creates two real PDFs and verification JSON for different event types, attendance and budgets. No external service is contacted. Costs are explicitly illustrative estimates. `npm run demo` retains the old Markdown demonstration, now with a parsed title and attendance-scaled sample estimates. WorkBuddy should use structured inputs for real planning.
-
-## Preserved hosted architecture (not required for the MVP)
+The generated Expert package is written to:
 
 ```text
-WorkBuddy desktop (understanding, planning, tool selection)
-  -> local operations MCP adapter
-  -> HTTPS backend (token bound to one Telegram owner)
-  -> existing event database + operational tables
-  -> PDFs, pending actions, secure account connections
-
-Telegram operations bot
-  -> authenticated webhook
-  -> private identity, durable inbox, exact-content approval buttons
-
-Independent cloud reminder worker
-  -> durable SQLite jobs -> Telegram API -> acknowledgment history
+artifacts/darlingagent-expert
 ```
 
-WorkBuddy remains the intelligent execution platform. There is no replacement LLM orchestrator and no invented WorkBuddy cloud endpoint. Natural-language messages to the operations bot are saved for the desktop coordinator to consume; they are not automatically executed by a cloud agent. Native WorkBuddy Telegram Assistant needs a separate bot and a running desktop. Configure and verify routing before claiming one-prompt autonomy.
+This package includes machine-specific MCP configuration.
 
-SQLite and documents need one host with persistent local storage. Backend and worker must run continuously. Docker and Compose files are supplied but were not built here because no Docker daemon was running. No production deployment or paid infrastructure was created.
+Generate it again on each machine where the project is installed.
 
-## Account connections and real actions
-
-Telegram `/connect gmail`, `/connect calendar`, `/connect drive` and `/connect tally` open private, short-lived HTTPS onboarding flows. Google uses the maintained OAuth library, PKCE, one-use state and account/scope verification. Credentials use AES-256-GCM with owner/provider binding. Tally keys are entered on a secure page, not in chat.
-
-External actions freeze the reviewed payload, bind approval to the user and content hash, expire after one hour and claim execution once. Connecting never approves a send. The backend can send Gmail MIME messages with PDFs, publish and retrieve Tally forms, create Calendar events without guests, and upload PDFs privately to Drive. Live verification is pending. See each adapter's specific limits in STATUS.md.
-
-Reminder delivery means Telegram returned a matching chat/message ID, not that someone read it. A network timeout after a send may be ambiguous; the job is held for reconciliation instead of blindly retried. Daily/weekly scheduling preserves local wall time across DST. No continuously running service is claimed until deployment is complete.
-
-## Existing local MCP (trusted prototype)
-
-The existing local event/task/fact/approval/registration interface remains available:
+### Start the local MCP server
 
 ```bash
-CAMPUS_EVENT_DB_PATH=./data/legacy-events.sqlite npm run mcp
+npm run mcp
 ```
 
-It exposes `event_create`, `event_create_structured`, `event_get`, `event_update_facts`, `task_create`, `task_submit_result`, `task_transition`, `budget_validate`, `event_list_tasks`, `approval_request`, `approval_record_decision`, `artifact_get`, `registration_draft`, `registration_create`, `registration_get`, and `tally_verify_connection`.
+When integrating with a compatible MCP client,
+configure a stdio process that launches:
 
-This trusted-local interface accepts caller-recorded approval assertions. **Do not expose it publicly or use it as the authenticated Telegram approval service.** The operations MCP is a separate adapter for that purpose. `event_create_structured` preserves WorkBuddy's actual facts and itemized budget. Legacy workflow `completed` still means draft budget validation, never external execution.
+```text
+node /ABSOLUTE/PATH/TO/darling-agent/dist/scripts/run-mcp.js
+```
 
-Tally creation requires `TALLY_API_KEY` in the legacy MCP environment and explicit confirmation. It verifies the created form and persists its real ID/URL. New durable per-event reservations prevent concurrent/uncertain retries from creating duplicates. Failed attempts require deliberate reconciliation before retry. The registration deadline is not automatically enforced. Tests use mocked HTTP responses; first live form submission must be checked manually.
+The local MCP server does not require cloud hosting
+or a Telegram bot.
 
-The legacy database defaults outside the package cache; `CAMPUS_EVENT_DB_PATH` overrides it. The operations runtime instead uses `DARLING_DATA_DIR/events.sqlite` plus a `documents` directory. Never commit either database or secrets.
+See the full [Installation Guide](docs/INSTALLATION.md).
 
-## Optional skill installation
+---
 
-Installing this skill does not install the MCP server or an Expert Team. The original Skills CLI syntax remains:
+## Example
+
+Give DarlingAgent this event-planning request:
+
+> Organize an AI networking event for 50 students at
+> Taylor's University on 20 October 2026,
+> from 4 PM to 6 PM.
+>
+> My budget is RM1,500.
+>
+> Prepare the event plan, organize tasks,
+> calculate the budget, create a proposal PDF,
+> and prepare registration.
+>
+> Execute supported local operations and ask
+> before publishing or sending anything.
+
+Expected supported outputs include:
+
+- A persistent event record
+- Structured organizer tasks
+- Itemized budget with validation results
+- An event proposal PDF
+- Registration form draft
+- Task tracker
+- Unsent invitation draft
+- Pending approvals and unresolved issues
+
+Live registration publication requires a configured
+Tally connection and explicit approval.
+
+See [docs/DEMO.md](docs/DEMO.md) for the verification workflow.
+
+---
+
+## Use with Other AI Coding Assistants
+
+DarlingAgent includes an installable agent skill for
+compatible AI development environments.
+
+These include environments such as:
+
+- Cursor
+- Claude Code
+- Codex
+- OpenCode
+- Windsurf
+
+Example Skills CLI installation:
 
 ```bash
-npx skills add faizanburgi/DarlingAgent --list
-npx skills add faizanburgi/DarlingAgent --skill campus-event-agent -a opencode -a codex -a claude-code -a cursor -a windsurf
-npx skills add faizanburgi/DarlingAgent --skill campus-event-agent -g -a opencode -a codex -a claude-code -a cursor -a windsurf
+npx skills add zeethdaleel/darling-agent --skill campus-event-agent -a opencode -a codex -a claude-code -a cursor -a windsurf
 ```
 
-Use a reviewed Git revision for your deployment rather than an assumed release tag. The native WorkBuddy team package/import path is not verified: the original README referenced a manifest that was not committed. Follow the installed client's supported custom expert/MCP UI and the [WorkBuddy instructions](packages/workbuddy-team/README.md).
+**Important:** Installing the skill provides agent guidance.
+It does not automatically install the local MCP server
+or the complete WorkBuddy Expert.
 
-No credentials belong in Git history, public Telegram groups, agent prompts or issue comments. Review [DEPLOYMENT.md](docs/DEPLOYMENT.md) before live setup and [STATUS.md](docs/STATUS.md) before presenting a demonstration.
+The repository itself can also be installed and built using npm.
+
+DarlingAgent is not currently advertised as a separately
+published npm registry package.
+
+---
+
+## Technical Architecture
+
+DarlingAgent uses:
+
+| Technology | Purpose |
+|---|---|
+| Tencent WorkBuddy | AI reasoning and agent execution |
+| TypeScript | Application and tool implementation |
+| Node.js | Local MCP runtime |
+| Model Context Protocol | Tool integration |
+| SQLite | Persistent event and task records |
+| pdf-lib | PDF document generation |
+| Tally API | Optional registration publication |
+
+The current hackathon implementation is local-first.
+
+Cloud hosting and Telegram operations are not required.
+
+For technical details, see
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+---
+
+## Project Status
+
+The local MCP and document-generation workflow has been
+verified through automated tests.
+
+The project has previously passed a 74-test local suite,
+including tests using real SQLite databases, a stdio MCP
+subprocess, and generated PDF files.
+
+The current CI result can be viewed under
+[GitHub Actions](../../actions).
+
+Passing automated tests does not by itself verify
+complete autonomous execution inside WorkBuddy.
+
+Additional live testing is required for:
+
+- Native WorkBuddy Expert invocation
+- WorkBuddy-to-MCP tool execution
+- Tally registration publication
+- Optional research and email integrations
+
+Read [docs/STATUS.md](docs/STATUS.md) for current limitations.
+
+---
+
+## Project Structure
+
+```text
+darling-agent/
+|
+|-- packages/
+|   |-- darlingagent-expert/
+|   |   |-- .codebuddy-plugin/
+|   |   |-- agents/
+|   |   |-- skills/
+|   |   |-- .mcp.json
+|   |
+|   |-- workbuddy-team/
+|
+|-- skills/
+|   |-- campus-event-agent/
+|
+|-- src/
+|   |-- adapters/
+|   |-- core/
+|   |-- operations/
+|   |-- scripts/
+|   |-- tests/
+|
+|-- docs/
+|   |-- INSTALLATION.md
+|   |-- ARCHITECTURE.md
+|   |-- STATUS.md
+|   |-- DEMO.md
+|   |-- LOCAL_MVP.md
+|
+|-- package.json
+|-- package-lock.json
+|-- README.md
+```
+
+Some legacy cloud/backend components remain in the repository
+for future development but are outside the current MVP.
+
+---
+
+## Safety and Permissions
+
+DarlingAgent distinguishes between preparing an action
+and actually executing an external action.
+
+The agent should request approval before:
+
+- Publishing registration forms
+- Sending communications
+- Sharing personal information
+- Making commitments or spending money
+- Performing other consequential external actions
+
+The local MCP assumes a trusted local environment.
+It must not be exposed directly as a public service.
+
+Never commit API keys, OAuth credentials, or database
+secrets to GitHub.
+
+---
+
+## Development
+
+DarlingAgent is an open-source hackathon project
+developed collaboratively.
+
+We welcome improvements to:
+
+- Agent reliability
+- MCP integrations
+- Event planning workflows
+- Document generation
+- User experience
+- Tests and verification
+- Documentation
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+Contributors are acknowledged through GitHub's
+commit and pull request history.
+
+---
+
+## Future Development
+
+Potential future improvements include:
+
+- Additional verified WorkBuddy integrations
+- More complete organizer collaboration
+- Extended document generation
+- Additional event templates
+- Improved vendor research workflows
+- Extended registration management
+- Optional cloud deployment
+
+These are development goals, not claims
+about features already available.
+
+---
+
+## Links
+
+**GitHub Repository**
+
+https://github.com/zeethdaleel/darling-agent
+
+**Tencent WorkBuddy**
+
+https://www.workbuddy.ai/
+
+**Official WorkBuddy Expert Documentation**
+
+https://open.workbuddy.cn/en/docs/expert
+
+---
+
+### DarlingAgent
+
+**Your Event. Our Execution.**
+
+*One Prompt. One Goal. End-to-End Execution.*
